@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:md="http://www.medico.com/schemas/record" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicyId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIF004:policy" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides" xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os         access_control-xacml-2.0-policy-schema-os.xsd">
+    <Description>
+        Policy for Conformance Test IIIF004.
+    </Description>
+    <PolicyDefaults>
+        <XPathVersion>http://www.w3.org/TR/1999/Rec-xpath-19991116</XPathVersion>
+    </PolicyDefaults>
+    <Target/>
+    <Rule Effect="Permit" RuleId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIF004:rule">
+        <Description>
+            Julius Hibbert can read or write Bart Simpson's medical record.
+        </Description>
+        <Target><Subjects><Subject><SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">RandomValue_##+]][[*##_####$%098763524_RandomValue456Mutant_xyz</AttributeValue><SubjectAttributeDesignator AttributeId="it.cnr.isti.sedc.RandomAttributeId.subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/></SubjectMatch></Subject></Subjects></Target>
+        <Condition>
+<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Bart Simpson</AttributeValue>
+                <AttributeSelector DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" RequestContextPath="//md:record/md:patient_info/md:name/text()"/>                  </Apply>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">yes</AttributeValue>
+                <AttributeSelector DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" RequestContextPath="//md:record/md:diagnosis_info/md:pathological_diagnosis/md:malignancy/@type"/>                  </Apply>
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
+                <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Gastric Cancer</AttributeValue>
+                <AttributeSelector DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true" RequestContextPath="//md:record/md:diagnosis_info/md:diagnosis/md:item/text()"/>                  </Apply>
+        
+</Apply></Condition>
+    </Rule>
+</Policy>

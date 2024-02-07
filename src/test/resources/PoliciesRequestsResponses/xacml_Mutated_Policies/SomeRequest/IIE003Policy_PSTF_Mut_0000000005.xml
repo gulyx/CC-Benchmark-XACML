@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PolicySet xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicyCombiningAlgId="urn:oasis:names:tc:xacml:1.0:policy-combining-algorithm:first-applicable" PolicySetId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIE003:policyset" xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os         access_control-xacml-2.0-policy-schema-os.xsd">
+    <Description>
+        PolicySet for Conformance Test IIE003.  policy2 is not
+        valid, but since, by first-applicable, only policy1 should be evaluated, the
+        response depends only on policy1.
+    </Description>
+    <Target><Subjects><Subject><SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">RandomValue_##+]][[*##_####$%098763524_RandomValue456Mutant_xyz</AttributeValue><SubjectAttributeDesignator AttributeId="it.cnr.isti.sedc.RandomAttributeId.subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/></SubjectMatch></Subject></Subjects></Target>
+    <PolicyIdReference>urn:oasis:names:tc:xacml:2.0:conformance-test:IIE003:policy1</PolicyIdReference>
+    <PolicyIdReference>urn:oasis:names:tc:xacml:2.0:conformance-test:IIE003:policy2</PolicyIdReference>
+</PolicySet>

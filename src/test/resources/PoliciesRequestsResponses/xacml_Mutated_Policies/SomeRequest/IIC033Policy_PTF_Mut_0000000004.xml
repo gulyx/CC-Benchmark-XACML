@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicyId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIC033:policy" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:deny-overrides" xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os         access_control-xacml-2.0-policy-schema-os.xsd">
+    <Description>
+        Policy for Conformance Test IIC033.
+    </Description>
+    <Target><Subjects><Subject><SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal"><AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">RandomValue_##+]][[*##_####$%098763524_RandomValue456Mutant_xyz</AttributeValue><SubjectAttributeDesignator AttributeId="it.cnr.isti.sedc.RandomAttributeId.subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/></SubjectMatch></Subject></Subjects></Target>
+    <Rule Effect="Permit" RuleId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIC033:rule">
+        <Description>
+            A subject who is exactly 34 years older than Bart
+            Simpson may read Bart Simpson's medical record.
+        </Description>
+        <Condition>
+<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-equal">
+            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:integer-to-double">
+                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:integer-subtract">
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:integer-one-and-only">
+                        <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:age" DataType="http://www.w3.org/2001/XMLSchema#integer"/>
+                    </Apply>
+                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:integer-one-and-only">
+                        <EnvironmentAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:bart-simpson-age" DataType="http://www.w3.org/2001/XMLSchema#integer"/>
+                    </Apply>
+                </Apply>
+            </Apply>
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#double">34.0</AttributeValue>
+        
+</Apply></Condition>
+    </Rule>
+</Policy>
