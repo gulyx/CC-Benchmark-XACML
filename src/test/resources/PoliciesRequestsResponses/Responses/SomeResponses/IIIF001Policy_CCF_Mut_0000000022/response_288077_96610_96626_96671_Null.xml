@@ -1,0 +1,9 @@
+<Response>
+  <Result ResourceId="http://medico.com/record/patient/BartSimpson">
+    <Decision>Indeterminate</Decision>
+    <Status>
+      <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:missing-attribute"/>
+      <StatusMessage>couldn't resolve XPath expression //md:record/md:patient_info/md:name/text() for type http://www.w3.org/2001/XMLSchema#string</StatusMessage>
+    </Status>
+  </Result>
+</Response>
