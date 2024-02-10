@@ -1,0 +1,8 @@
+<Response>
+  <Result ResourceId="urn:root_RandomValue_[B@138d7e55_4">
+    <Decision>Deny</Decision>
+    <Status>
+      <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/>
+    </Status>
+  </Result>
+</Response>
