@@ -1,0 +1,9 @@
+<Response>
+  <Result ResourceId=" ">
+    <Decision>Indeterminate</Decision>
+    <Status>
+      <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:missing-attribute"/>
+      <StatusMessage>Couldn't find SubjectAttributeDesignator attribute</StatusMessage>
+    </Status>
+  </Result>
+</Response>
