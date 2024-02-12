@@ -1,0 +1,26 @@
+<Response>
+  <Result ResourceId=" ">
+    <Decision>Deny</Decision>
+    <Status>
+      <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/>
+    </Status>
+    <Obligations>
+      <Obligation ObligationId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:obligation-3" FulfillOn="Deny">
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:assignment1" DataType="http://www.w3.org/2001/XMLSchema#string">assignment1</AttributeAssignment>
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:assignment2" DataType="http://www.w3.org/2001/XMLSchema#string">assignment2</AttributeAssignment>
+      </Obligation>
+      <Obligation ObligationId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:obligation-4" FulfillOn="Deny">
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:assignment1" DataType="http://www.w3.org/2001/XMLSchema#string">assignment1</AttributeAssignment>
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policyset:assignment2" DataType="http://www.w3.org/2001/XMLSchema#string">assignment2</AttributeAssignment>
+      </Obligation>
+      <Obligation ObligationId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:obligation-4" FulfillOn="Deny">
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:assignment1" DataType="http://www.w3.org/2001/XMLSchema#string">assignment1</AttributeAssignment>
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:assignment2" DataType="http://www.w3.org/2001/XMLSchema#string">assignment2</AttributeAssignment>
+      </Obligation>
+      <Obligation ObligationId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:obligation-3" FulfillOn="Deny">
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:assignment1" DataType="http://www.w3.org/2001/XMLSchema#string">assignment1</AttributeAssignment>
+        <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA018:policy1:assignment2" DataType="http://www.w3.org/2001/XMLSchema#string">assignment2</AttributeAssignment>
+      </Obligation>
+    </Obligations>
+  </Result>
+</Response>
