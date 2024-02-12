@@ -1,0 +1,8 @@
+<Response>
+  <Result ResourceId="RandomValue:[B@6b266176:2">
+    <Decision>NotApplicable</Decision>
+    <Status>
+      <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/>
+    </Status>
+  </Result>
+</Response>
