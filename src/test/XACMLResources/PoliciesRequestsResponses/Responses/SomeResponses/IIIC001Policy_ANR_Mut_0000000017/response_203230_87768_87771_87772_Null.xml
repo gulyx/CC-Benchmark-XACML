@@ -1,4 +1,4 @@
-<Response>
+<Response xmlns="urn:oasis:names:tc:xacml:2.0:context:schema:os"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:context:schema:os access_control-xacml-2.0-context-schema-os.xsd">
   <Result ResourceId="urn:root_RandomValue_[B@56830ed_3">
     <Decision>NotApplicable</Decision>
     <Status>
