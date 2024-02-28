@@ -1,5 +1,7 @@
 package it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.herasaf.xacml.core.SyntaxException;
@@ -12,20 +14,38 @@ import org.herasaf.xacml.core.policy.PolicyMarshaller;
 
 public class HerasafUtil {
 
+	public static Evaluatable loadPolicyByPath(String filePattern, Object... arguments) throws SyntaxException, FileNotFoundException {
+        String file = String.format(filePattern, arguments);
+        InputStream is = new FileInputStream(file);
+        return PolicyMarshaller.unmarshal(is);
+    }
+
 	public static Evaluatable loadPolicy(String filePattern, Object... arguments) throws SyntaxException {
         String file = String.format(filePattern, arguments);
         InputStream is = retreiveStaticClassLoader().getResourceAsStream(file);
         return PolicyMarshaller.unmarshal(is);
     }
 
-    public static RequestType loadRequest(String filePattern, String testCase) throws SyntaxException {
-        String file = String.format(filePattern, testCase);
+    public static RequestType loadRequestByPath(String filePattern, Object... arguments) throws SyntaxException, FileNotFoundException {
+        String file = String.format(filePattern, arguments);
+        InputStream is = new FileInputStream(file);
+        return RequestMarshaller.unmarshal(is);
+    }
+
+    public static RequestType loadRequest(String filePattern, Object... arguments) throws SyntaxException {
+        String file = String.format(filePattern, arguments);
         InputStream is = retreiveStaticClassLoader().getResourceAsStream(file);
         return RequestMarshaller.unmarshal(is);
     }
 
-    public static ResponseType loadResponse(String filePattern, String testCase) throws SyntaxException {
-        String file = String.format(filePattern, testCase);
+    public static ResponseType loadResponseByPath(String filePattern, Object... arguments) throws SyntaxException, FileNotFoundException {
+        String file = String.format(filePattern, arguments);
+        InputStream is = new FileInputStream(file);
+        return ResponseMarshaller.unmarshal(is);
+    }
+
+    public static ResponseType loadResponse(String filePattern, Object... arguments) throws SyntaxException {
+        String file = String.format(filePattern, arguments);
         InputStream is = retreiveStaticClassLoader().getResourceAsStream(file);
         return ResponseMarshaller.unmarshal(is);
     }
