@@ -1,16 +1,23 @@
 package it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments;
 
-import static org.junit.Assert.assertNotNull;
+//import static org.junit.Assert.assertNotNull;
+//import static org.junit.Assert.assertThat;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.io.OutputStream;
 
+import org.herasaf.xacml.core.SyntaxException;
+import org.herasaf.xacml.core.WritingException;
 import org.herasaf.xacml.core.api.PDP;
 import org.herasaf.xacml.core.api.UnorderedPolicyRepository;
 
@@ -24,12 +31,14 @@ import org.herasaf.xacml.core.context.impl.ResponseType;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 
-import org.junit.Test;
-import org.junit.After;
+import org.xml.sax.SAXException;
+import org.xmlunit.matchers.CompareMatcher;
 
 public class HerasafQueryTests {
 
 	private PDP herasafPDP;
+
+	private static final String STRICT_COMPARISON_FLAG_LABEL = "strictCompare";
 
 	private static final String SINGLE_TEST_CASE_PROPERTY_LABEL = "testCaseID";
 
@@ -68,7 +77,7 @@ public class HerasafQueryTests {
 		this.herasafPDP = SimplePDPFactory.getSimplePDP();
 	}
 
-	public void deployPolicies(String policyFilePattern, String testCase) throws Exception {
+	public void deployPolicies(String policyFilePattern, String testCase) throws FileNotFoundException, SyntaxException {
 		List<Evaluatable> evals = new ArrayList<Evaluatable>();
 		evals.add(HerasafUtil.loadPolicyByPath(policyFilePattern, testCase));
 		UnorderedPolicyRepository deploymentRepo = (UnorderedPolicyRepository) this.herasafPDP.getPolicyRepository();
@@ -86,66 +95,62 @@ public class HerasafQueryTests {
 	@Test
 	public void testSingleUseCaseByProperties() throws Exception {
 		String policyID = System.getProperty(MUTATED_POLICY_PROPERTY_LABEL);
-int counter=0;
-int processed=0;
-//policyID="IIA001Policy_ANR_Mut_0000000010";
-//policyID="IIA001Policy_ANR_Mut_0000000011";
 
+//********************************************************
+//********************************************************
+		Assert.assertNotNull("The system's property \'" + MUTATED_POLICY_PROPERTY_LABEL + "\' is null or not set", policyID); 
+
+		this.testSingleUseCaseByProperties(policyID);
+//********************************************************
+//int counter=0;
+//int processed=0;
+//
 //String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
-//String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
-//String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
-//String policyMarker="IIB003Policy_CCF_Mut_00000000"; int start=16; int end=23;
-//String policyMarker="IIC034Policy_CCF_Mut_00000000"; int start=18; int end=29;
-//String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
-//String policyMarker="IIA001Policy_CCF_Mut_00000000"; int start=34; int end=34;
-//String policyMarker="IIA002Policy_ANR_Mut_00000000"; int start=10; int end=33;
-//String policyMarker="IIA002Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=57;
-//String policyMarker="IIA003Policy_ANR_Mut_00000000"; int start=10; int end=33;
-//String policyMarker="IIA003Policy_CCF_Mut_00000000"; int start=34; int end=34;
-//String policyMarker="IIA005Policy_ANR_Mut_00000000"; int start=10; int end=33;
-//String policyMarker="IIA005Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=56;
-String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
-for (int id = start; id <= end; id++) {	
-policyID=policyMarker+id;
-//policyID="IIA001Policy_ANR_Mut_00000000"+id; // 10-33
-//policyID="IIA006Policy_ANR_Mut_00000000"+id; // 10-57
-//policyID="IIB003Policy_CCF_Mut_00000000"+id; // 16-23
-//policyID="IIB007Policy_CCF_Mut_00000000"+id; // 22-33
-//policyID="IIC034Policy_CCF_Mut_00000000"+id; // 18-29
-
-		assertNotNull("The system's property \'" + MUTATED_POLICY_PROPERTY_LABEL + "\' is null or not set", policyID); 
-
-//		this.testSingleUseCaseByProperties(policyID);
-		
-		List<String> mutatedRequestsWithResponseIDList = this.retreiveMutatedRequestsIDsWithResponse(policyID);
-		for (String mutatedRequestsWithResponseID : mutatedRequestsWithResponseIDList) {
-			try {
-				processed++;
-				System.err.println("§§§§§§§ Processing: "+ policyID + ", "+mutatedRequestsWithResponseID);
-
-				this.testSingleUseCaseByProperties(policyID, mutatedRequestsWithResponseID);
-//			} catch (Throwable t) {
-			} catch (junit.framework.AssertionFailedError e) {
-				counter++;
-			}	
-			this.undeployPolicies();
-		}
-}
-		
-		System.err.println("Failed : "+counter+" over : "+processed);
-		
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+////String policyMarker="IIB003Policy_CCF_Mut_00000000"; int start=16; int end=23;
+////String policyMarker="IIC034Policy_CCF_Mut_00000000"; int start=18; int end=29;
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA001Policy_CCF_Mut_00000000"; int start=34; int end=34;
+////String policyMarker="IIA002Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA002Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=57;
+////String policyMarker="IIA003Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA003Policy_CCF_Mut_00000000"; int start=34; int end=34;
+////String policyMarker="IIA005Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA005Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=56;
+////String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+//
+//for (int id = start; id <= end; id++) {	
+//	policyID=policyMarker+id;
+//
+//	List<String> mutatedRequestsWithResponseIDList = this.retreiveMutatedRequestsIDsWithResponse(policyID);
+//	for (String mutatedRequestsWithResponseID : mutatedRequestsWithResponseIDList) {
+//		try {
+//			processed++;
+////			System.err.println("§§§§§§§ Processing: "+ policyID + ", "+mutatedRequestsWithResponseID);
+//
+//			this.testSingleUseCaseByProperties(policyID, mutatedRequestsWithResponseID);
+// 		} catch (AssertionError e) {
+//			counter++;
+//		}	
+//		this.undeployPolicies();
+//	}
+//}		
+//		System.err.println("Failed : "+counter+" over : "+processed);
+//********************************************************
+//********************************************************		
 	}
 
 	private void testSingleUseCaseByProperties(String policyID) throws Exception {
 		String requestID = System.getProperty(MUTATED_REQUEST_PROPERTY_LABEL);
-//requestID="012197_3348_3350_3352_Null";
-//requestID="012199_3349_3350_3353_Null";
-		assertNotNull("The system's property \'" + MUTATED_REQUEST_PROPERTY_LABEL + "\' is null or not set", requestID); 
+		Assert.assertNotNull("The system's property \'" + MUTATED_REQUEST_PROPERTY_LABEL + "\' is null or not set", requestID); 
 		
 		this.testSingleUseCaseByProperties(policyID, requestID);
 	}
 
-	private void testSingleUseCaseByProperties(String policyID, String requestID) throws Exception {
+	private void testSingleUseCaseByProperties(String policyID, String requestID) throws SyntaxException, WritingException, SAXException, IOException {
+		System.err.println("§§§§§§§ Processing: "+ policyID + ", "+requestID);
+
 		this.deployPolicies(MUTATED_POLICY_FILE_PATTERN, policyID);
 
 		RequestType request = HerasafUtil.loadRequestByPath(MUTATED_REQUEST_FILE_PATTERN, policyID, requestID);
@@ -161,8 +166,16 @@ policyID=policyMarker+id;
 
 		XMLUnit.setIgnoreWhitespace(true);
 		XMLUnit.setIgnoreAttributeOrder(true);
-//expectedOS = new ByteArrayOutputStream();		
-		XMLAssert.assertXMLEqual("Testcase <Policy,Request>: <" + policyID + ", " + requestID +"> failed!", expectedOS.toString(), responseOS.toString());		
+
+//System.err.println("expected: " + expectedOS.toString());
+//System.err.println("response: " + responseOS.toString());
+
+		String strictComparison = System.getProperty(STRICT_COMPARISON_FLAG_LABEL);		
+		if ((strictComparison != null) && (!strictComparison.equalsIgnoreCase("false"))) {
+			XMLAssert.assertXMLEqual("Testcase <Policy,Request>: <" + policyID + ", " + requestID +"> failed!", expectedOS.toString(), responseOS.toString());
+		} else {	
+			Assert.assertThat(responseOS.toString(), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(a -> !"ResourceId".equals(a.getName())));
+		}	
 	}
 
 	//    @Test
@@ -174,11 +187,11 @@ policyID=policyMarker+id;
 //	@Test
 	public void testSingleConformanceUseCaseByProperty() throws Exception {
 		String testCase = System.getProperty(SINGLE_TEST_CASE_PROPERTY_LABEL);
-		assertNotNull("The system's property \'" + SINGLE_TEST_CASE_PROPERTY_LABEL + "\' is null or not set", testCase); 
+		Assert.assertNotNull("The system's property \'" + SINGLE_TEST_CASE_PROPERTY_LABEL + "\' is null or not set", testCase); 
 		this.testConformance(testCase);
 	}
 
-@Test
+	@Test
 	public void testConformance() throws Exception {
 		List<String> testCasesIDList = this.retreiveConformanceTestCasesIDs();
 		for (String testID : testCasesIDList) {

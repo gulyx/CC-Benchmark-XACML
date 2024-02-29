@@ -53,6 +53,13 @@
 		</dependency>
 		
 		<dependency>
+    		<groupId>org.xmlunit</groupId>
+    		<artifactId>xmlunit-matchers</artifactId>
+			<version>${xmlunit.version}</version>
+    		<scope>test</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
@@ -222,7 +229,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${maven.surefire.version}</version>
 						<configuration>
-							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testConformance+testSingleUseCaseByProperties</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties+testConformance</test>-->
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties</test>
 						</configuration>
 					</plugin>
 				</plugins>
