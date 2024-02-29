@@ -91,7 +91,7 @@ int processed=0;
 //policyID="IIA001Policy_ANR_Mut_0000000010";
 //policyID="IIA001Policy_ANR_Mut_0000000011";
 
-String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
+//String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
 //String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
 //String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
 //String policyMarker="IIB003Policy_CCF_Mut_00000000"; int start=16; int end=23;
@@ -104,7 +104,7 @@ String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
 //String policyMarker="IIA003Policy_CCF_Mut_00000000"; int start=34; int end=34;
 //String policyMarker="IIA005Policy_ANR_Mut_00000000"; int start=10; int end=33;
 //String policyMarker="IIA005Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=56;
-//String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
 for (int id = start; id <= end; id++) {	
 policyID=policyMarker+id;
 //policyID="IIA001Policy_ANR_Mut_00000000"+id; // 10-33
@@ -178,7 +178,7 @@ policyID=policyMarker+id;
 		this.testConformance(testCase);
 	}
 
-//	@Test
+@Test
 	public void testConformance() throws Exception {
 		List<String> testCasesIDList = this.retreiveConformanceTestCasesIDs();
 		for (String testID : testCasesIDList) {
