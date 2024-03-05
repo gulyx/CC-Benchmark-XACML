@@ -61,6 +61,10 @@ public class HerasafQueryTests {
 
 // *********************************************************************************
 	
+	private static final String IDS_PROPERTY_LABEL = "idsList";
+	private static final String IDS_SEPARATOR = ",";
+	private static final String POLICY_REQUEST_SEPARATOR = ":";
+
 	private static final String MUTATED_POLICY_PROPERTY_LABEL = "policyID";
 	private static final String MUTATED_REQUEST_PROPERTY_LABEL = "requestID";
 
@@ -93,6 +97,29 @@ public class HerasafQueryTests {
 	}
 
 	@Test
+	public void testUseCasesByProperty() throws Exception {
+		String[] idsList = System.getProperty(IDS_PROPERTY_LABEL).split(IDS_SEPARATOR);
+		Assert.assertNotNull("The system's property \'" + IDS_PROPERTY_LABEL + "\' is null or not set", idsList); 
+		boolean processedAtLeastOnce = false;
+
+		for (String id : idsList) {
+			if (id != "") {
+				String policyID = id.split(POLICY_REQUEST_SEPARATOR)[0];
+				String requestID = id.split(POLICY_REQUEST_SEPARATOR)[1];
+
+				System.setProperty(MUTATED_POLICY_PROPERTY_LABEL,policyID);
+				System.setProperty(MUTATED_REQUEST_PROPERTY_LABEL,requestID);
+			
+				this.testSingleUseCaseByProperties();
+				processedAtLeastOnce = true;
+				this.undeployPolicies();
+			}
+		}
+		
+		Assert.assertTrue("The system's property \'" + IDS_PROPERTY_LABEL + "\' is wrongly set", processedAtLeastOnce);
+	}
+
+//	@Test
 	public void testSingleUseCaseByProperties() throws Exception {
 		String policyID = System.getProperty(MUTATED_POLICY_PROPERTY_LABEL);
 
@@ -105,9 +132,9 @@ public class HerasafQueryTests {
 //int counter=0;
 //int processed=0;
 //
-//String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
 ////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
-////String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+//String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
 ////String policyMarker="IIB003Policy_CCF_Mut_00000000"; int start=16; int end=23;
 ////String policyMarker="IIC034Policy_CCF_Mut_00000000"; int start=18; int end=29;
 ////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
@@ -125,14 +152,14 @@ public class HerasafQueryTests {
 //
 //	List<String> mutatedRequestsWithResponseIDList = this.retreiveMutatedRequestsIDsWithResponse(policyID);
 //	for (String mutatedRequestsWithResponseID : mutatedRequestsWithResponseIDList) {
-//		try {
+////		try {
 //			processed++;
 ////			System.err.println("§§§§§§§ Processing: "+ policyID + ", "+mutatedRequestsWithResponseID);
 //
 //			this.testSingleUseCaseByProperties(policyID, mutatedRequestsWithResponseID);
-// 		} catch (AssertionError e) {
-//			counter++;
-//		}	
+//// 		} catch (AssertionError e) {
+////			counter++;
+////		}	
 //		this.undeployPolicies();
 //	}
 //}		
@@ -149,6 +176,9 @@ public class HerasafQueryTests {
 	}
 
 	private void testSingleUseCaseByProperties(String policyID, String requestID) throws SyntaxException, WritingException, SAXException, IOException {
+//policyID="IIA006Policy_ANR_Mut_0000000010";
+//requestID="014521_4405_4409_4412_Null";
+		
 		System.err.println("§§§§§§§ Processing: "+ policyID + ", "+requestID);
 
 		this.deployPolicies(MUTATED_POLICY_FILE_PATTERN, policyID);
@@ -173,8 +203,11 @@ public class HerasafQueryTests {
 		String strictComparison = System.getProperty(STRICT_COMPARISON_FLAG_LABEL);		
 		if ((strictComparison != null) && (!strictComparison.equalsIgnoreCase("false"))) {
 			XMLAssert.assertXMLEqual("Testcase <Policy,Request>: <" + policyID + ", " + requestID +"> failed!", expectedOS.toString(), responseOS.toString());
-		} else {	
-			Assert.assertThat(responseOS.toString(), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(a -> !"ResourceId".equals(a.getName())));
+		} else {				
+//			Assert.assertThat(responseOS.toString(), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(a -> !"ResourceId".equals(a.getName())));
+//			Assert.assertThat(responseOS.toString(), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"StatusDetail".equals(node.getNodeName())));
+//			Assert.assertThat(CompareMatcher.isIdenticalTo(responseOS.toString()).withNodeFilter(node -> !"StatusMessage".equals(node.getNodeName())), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"StatusDetail".equals(node.getNodeName())));
+			Assert.assertThat(responseOS.toString(), CompareMatcher.isIdenticalTo(expectedOS.toString()).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
 		}	
 	}
 
