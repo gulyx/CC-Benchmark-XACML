@@ -109,20 +109,26 @@ else
     exit 1
 fi
 
-TEST_LIST=""                    
+TEST_LIST=""
 
-# for TUPLE in `cat ${LISTID_FILE}`
-# for TUPLE in `cat ./zac.txt`
-# for TUPLE in `head -n 1 ${LISTID_FILE}`
-for TUPLE in `head -n 2 ${LISTID_FILE}`
-# for TUPLE in `head -n 34 ${LISTID_FILE}`
-# for TUPLE in `cat ${LISTID_FILE} | shuf | head -n 10`
-# for TUPLE in `head -n 70 ${LISTID_FILE}`
+#TUPLES_LIST=`cat ${LISTID_FILE}`
+#TUPLES_LIST=`cat ./zac.txt`
+#TUPLES_LIST=`head -n 1 ${LISTID_FILE}`
+TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
+#TUPLES_LIST=`head -n 34 ${LISTID_FILE}`
+#TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n 10`
+#TUPLES_LIST=`head -n 70 ${LISTID_FILE}`
+
+TOTAL_TUPLES_TO_BE_PROCESSED=`echo ${TUPLES_LIST} | wc -w`
+TUPLES_PROCESSED="0"
+
+for TUPLE in ${TUPLES_LIST}
 do
     ID_POLICY=`echo ${TUPLE} | cut -d "${TUPLE_SEPARATOR}" -f 1`
     ID_REQUEST=`echo ${TUPLE} | cut -d "${TUPLE_SEPARATOR}" -f 2`
     
-    echo "Processing Group: ${ID_POLICY}, ${ID_REQUEST} ..."
+    (( TUPLES_PROCESSED=TUPLES_PROCESSED+1 ))
+    echo "(${TUPLES_PROCESSED} / ${TOTAL_TUPLES_TO_BE_PROCESSED}) Processing Group: ${ID_POLICY}, ${ID_REQUEST} ..."
           
     NEW_COVERAGE_STMS="0"
     NEW_COVERAGE_BRANCH="0"
