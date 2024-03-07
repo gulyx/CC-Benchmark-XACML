@@ -37,9 +37,11 @@ TMP_FILE_=`mktemp -p /tmp`
 ### Calcolare qui la coverage di CT
 cd ${MVN_PROJECT_DIR}
 mvn -P ${CT_PROFILE} clean test
+LAST_BUILD_STATUS="$?"
 cd -
 
-if [ -e  ${JACOCO_BIN_FILE} ]
+echo "------------------ LAST_BUILD_STATUS: ${LAST_BUILD_STATUS}, JACOCO_BIN_FILE: ${JACOCO_BIN_FILE} ------------------"
+if [[ "${LAST_BUILD_STATUS}" -eq 0 && -e ${JACOCO_BIN_FILE} ]]
 then
     mkdir -p ${JACOCO_OUTPUT_DIR}
     java -jar ${PATH_JACOCO_CLI_JAR} report ${JACOCO_BIN_FILE} --classfiles ${PATH_HERASAF_JAR} --sourcefiles ${PATH_HERASAF_SRC} --html ${JACOCO_OUTPUT_DIR} --xml ${JACOCO_OUTPUT_FILE_XML} --csv ${JACOCO_OUTPUT_FILE}
@@ -90,7 +92,7 @@ then
     INITIAL_COVERAGE_STMS_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_STMS})/(${INITIAL_COVERAGE_STMS} + ${INITIAL_COVERAGE_MISSED_STMS}))*100)" | bc -l`
 #
     ((INITIAL_TOTAL_COVERAGE_BRANCH=INITIAL_COVERAGE_BRANCH + INITIAL_COVERAGE_MISSED_BRANCH))
-    if [ "${INITIAL_TOTAL_COVERAGE_BRANCH}" -gt "0" ]
+    if [[ "${INITIAL_TOTAL_COVERAGE_BRANCH}" -gt "0" ]]
     then
         INITIAL_COVERAGE_BRANCH_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_BRANCH})/(${INITIAL_TOTAL_COVERAGE_BRANCH}))*100)" | bc -l`
     else
@@ -110,9 +112,9 @@ fi
 TEST_LIST=""                    
 
 # for TUPLE in `cat ${LISTID_FILE}`
-for TUPLE in `cat ./zac.txt`
+# for TUPLE in `cat ./zac.txt`
 # for TUPLE in `head -n 1 ${LISTID_FILE}`
-# for TUPLE in `head -n 2 ${LISTID_FILE}`
+for TUPLE in `head -n 2 ${LISTID_FILE}`
 # for TUPLE in `head -n 34 ${LISTID_FILE}`
 # for TUPLE in `cat ${LISTID_FILE} | shuf | head -n 10`
 # for TUPLE in `head -n 70 ${LISTID_FILE}`
@@ -139,10 +141,11 @@ do
 #    mvn -D${POLICYID_SYSTEM_PROPERTY_LABEL}="${ID_POLICY}" -D${REQUESTID_SYSTEM_PROPERTY_LABEL}="${ID_REQUEST}" test
     echo "mvn -P${AT_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}=\"${CURRENT_TEST_LIST}\" test"
     mvn -P${AT_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}="${CURRENT_TEST_LIST}" test
+    LAST_BUILD_STATUS="$?"
     cd -
 
-    echo "${JACOCO_BIN_FILE} -------------------------------------------------------------"
-    if [ -e  ${JACOCO_BIN_FILE} ]
+    echo "------------------ LAST_BUILD_STATUS: ${LAST_BUILD_STATUS}, JACOCO_BIN_FILE: ${JACOCO_BIN_FILE} ------------------"
+    if [[ "${LAST_BUILD_STATUS}" -eq 0 && -e ${JACOCO_BIN_FILE} ]]
     then
         mkdir -p ${JACOCO_OUTPUT_DIR}
         java -jar ${PATH_JACOCO_CLI_JAR} report ${JACOCO_BIN_FILE} --classfiles ${PATH_HERASAF_JAR} --sourcefiles ${PATH_HERASAF_SRC} --html ${JACOCO_OUTPUT_DIR} --xml ${JACOCO_OUTPUT_FILE_XML} --csv ${JACOCO_OUTPUT_FILE}
@@ -176,30 +179,30 @@ do
        echo "BRANCH: ${NEW_COVERAGE_BRANCH} VS. ${COVERAGE_BRANCH}"
        echo "LINE: ${NEW_COVERAGE_LINE} VS. ${COVERAGE_LINE}"
        echo "COMPLEXITY: ${NEW_COVERAGE_COMPLEXITY} VS. ${COVERAGE_COMPLEXITY}"
-       if [ "${IS_COVERAGE_IMPROVED}" -eq "1" ]
+       if [[ "${IS_COVERAGE_IMPROVED}" -eq "1" ]]
        then
             # some coverage increases
             echo "WOW ... some coverage index got an improvement"
 
-            if [ "${NEW_COVERAGE_STMS}" -gt "${COVERAGE_STMS}" ]
+            if [[ "${NEW_COVERAGE_STMS}" -gt "${COVERAGE_STMS}" ]]
             then
                 COVERAGE_STMS="${NEW_COVERAGE_STMS}"
                 COVERAGE_MISSED_STMS="${NEW_COVERAGE_MISSED_STMS}"
             fi
                     
-            if [ "${NEW_COVERAGE_BRANCH}" -gt "${COVERAGE_BRANCH}" ]
+            if [[ "${NEW_COVERAGE_BRANCH}" -gt "${COVERAGE_BRANCH}" ]]
             then
                 COVERAGE_BRANCH="${NEW_COVERAGE_BRANCH}"
                 COVERAGE_MISSED_BRANCH="${NEW_COVERAGE_MISSED_BRANCH}"
             fi
                     
-            if [ "${NEW_COVERAGE_LINE}" -gt "${COVERAGE_LINE}" ]
+            if [[ "${NEW_COVERAGE_LINE}" -gt "${COVERAGE_LINE}" ]]
             then
                 COVERAGE_LINE="${NEW_COVERAGE_LINE}"
                 COVERAGE_MISSED_LINE="${NEW_COVERAGE_MISSED_LINE}"
             fi
                     
-            if [ "${NEW_COVERAGE_COMPLEXITY}" -gt "${COVERAGE_COMPLEXITY}" ]
+            if [[ "${NEW_COVERAGE_COMPLEXITY}" -gt "${COVERAGE_COMPLEXITY}" ]]
             then
                 COVERAGE_COMPLEXITY="${NEW_COVERAGE_COMPLEXITY}"
                 COVERAGE_MISSED_COMPLEXITY="${NEW_COVERAGE_MISSED_COMPLEXITY}"
@@ -216,7 +219,7 @@ do
     sleep 2
         
 # exit    
-# if [ "${STOP_IT}" -eq "1" ]
+# if [[ "${STOP_IT}" -eq "1" ]]
 # then
 #    exit
 # else
@@ -228,7 +231,7 @@ COVERAGE_STMS_PERCENTUAL=`echo "scale=2; (((${COVERAGE_STMS})/(${COVERAGE_STMS} 
 #        
 #echo "@@@@@ ${COVERAGE_BRANCH_PERCENTUAL} ${COVERAGE_BRANCH} ${COVERAGE_MISSED_BRANCH}"        
 ((TOTAL_COVERAGE_BRANCH=COVERAGE_BRANCH + COVERAGE_MISSED_BRANCH))
-if [ "${TOTAL_COVERAGE_BRANCH}" -gt "0" ]
+if [[ "${TOTAL_COVERAGE_BRANCH}" -gt "0" ]]
 then
     COVERAGE_BRANCH_PERCENTUAL=`echo "scale=2; (((${COVERAGE_BRANCH})/(${TOTAL_COVERAGE_BRANCH}))*100)" | bc -l`
 else
