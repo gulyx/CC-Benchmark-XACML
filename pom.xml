@@ -230,7 +230,9 @@
 						<version>${maven.surefire.version}</version>
 						<configuration>
 <!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties+testConformance</test>-->
-							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties</test>-->
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testUseCasesByProperty+testConformance</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testUseCasesByProperty</test>-->
 						</configuration>
 					</plugin>
 				</plugins>
