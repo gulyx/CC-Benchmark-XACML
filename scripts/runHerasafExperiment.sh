@@ -247,7 +247,7 @@ fi
 COVERAGE_LINE_PERCENTUAL=`echo "scale=2; (((${COVERAGE_LINE})/(${COVERAGE_LINE} + ${COVERAGE_MISSED_LINE}))*100)" | bc -l`
 COVERAGE_COMPLEXITY_PERCENTUAL=`echo "scale=2; (((${COVERAGE_COMPLEXITY})/(${COVERAGE_COMPLEXITY} + ${COVERAGE_MISSED_COMPLEXITY}))*100)" | bc -l`
 
-TEST_LIST_SIZE=`echo ${TEST_LIST} | sed "s/^[[:blank:]]*,//" | sed "s/,[[:blank:]]*$//" | sed 's/://g' | wc -w`
+TEST_LIST_SIZE=`echo ${TEST_LIST} | sed "s/^[[:blank:]]*,//" | sed "s/,[[:blank:]]*$//" | sed 's/,/ /g' | wc -w`
 
 echo "[RESULT-TESTS] The addition tests to the ConformanceTestSuite are: ${TEST_LIST}"
 echo "[RESULT-CSV-LABELS] STMS${CSV_SEPARATOR} BRANCH${CSV_SEPARATOR} LINE${CSV_SEPARATOR} COMPLEXITY${CSV_SEPARATOR} Test List Size${CSV_SEPARATOR} Test List"
