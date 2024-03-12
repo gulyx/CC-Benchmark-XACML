@@ -32,6 +32,13 @@ CSV_SEPARATOR="${JACOCO_CSV_SEPARATOR}"
 
 TARGET_PACKAGE="org.herasaf.xacml"
 
+if [[ "$1" == "--random" && -n "$2" ]]
+then
+    RANDOMIC_FLAG= "$2"
+else
+    RANDOMIC_FLAG= ""
+fi
+
 TMP_FILE_=`mktemp -p /tmp`
 
 ### Calcolare qui la coverage di CT
@@ -111,13 +118,18 @@ fi
 
 TEST_LIST=""
 
-#TUPLES_LIST=`cat ${LISTID_FILE}`
-#TUPLES_LIST=`cat ./zac.txt`
-#TUPLES_LIST=`head -n 1 ${LISTID_FILE}`
-TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
-#TUPLES_LIST=`head -n 34 ${LISTID_FILE}`
-#TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n 10`
-#TUPLES_LIST=`head -n 70 ${LISTID_FILE}`
+if [[ -z "${RANDOMIC_FLAG}" ]]
+then
+#    TUPLES_LIST=`cat ${LISTID_FILE}`
+#    TUPLES_LIST=`cat ./zac.txt`
+#    TUPLES_LIST=`head -n 1 ${LISTID_FILE}`
+    TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
+#    TUPLES_LIST=`head -n 34 ${LISTID_FILE}`
+#    TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n 10`
+#    TUPLES_LIST=`head -n 70 ${LISTID_FILE}`
+else
+    TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n ${RANDOMIC_FLAG}`
+fi
 
 TOTAL_TUPLES_TO_BE_PROCESSED=`echo ${TUPLES_LIST} | wc -w`
 TUPLES_PROCESSED="0"
