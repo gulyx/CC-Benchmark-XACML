@@ -34,9 +34,9 @@ TARGET_PACKAGE="org.herasaf.xacml"
 
 if [[ "$1" == "--random" && -n "$2" ]]
 then
-    RANDOMIC_FLAG= "$2"
+    RANDOMIC_FLAG="$2"
 else
-    RANDOMIC_FLAG= ""
+    RANDOMIC_FLAG=""
 fi
 
 TMP_FILE_=`mktemp -p /tmp`
