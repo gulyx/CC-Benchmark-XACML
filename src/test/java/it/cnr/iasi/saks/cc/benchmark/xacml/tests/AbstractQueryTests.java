@@ -51,8 +51,6 @@ public abstract class AbstractQueryTests {
 	protected static final String MUTATED_REQUEST_FILE_PATTERN = XACML_MUTATED_TS_RELATIVE_PATH + "Requests/SomeRequest/%s/Multiple_Comb/%s" + MUTATED_TAIL_PATTERN;
 	protected static final String MUTATED_POLICY_FILE_PATTERN = XACML_MUTATED_TS_RELATIVE_PATH + "xacml_Mutated_Policies/SomeRequest/%s" + MUTATED_TAIL_PATTERN;
 	
-	protected static int count = 0;
-	
 	@Test
 	public void testConformance() throws Exception {
 		List<String> testCasesIDList = this.retreiveConformanceTestCasesIDs();
@@ -63,8 +61,6 @@ public abstract class AbstractQueryTests {
 
 			this.undeployPolicies();
 		}
-		count++;
-		System.err.println("Counter: "+ count);
 	}
 
 	protected List<String> retreiveConformanceTestCasesIDs() throws FileNotFoundException {
