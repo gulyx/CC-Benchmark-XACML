@@ -28,6 +28,7 @@
 		<xmlunit.version>2.9.1</xmlunit.version>
 		<slf4j.version>1.7.32</slf4j.version>
 
+		<balana-core.version>1.2.12</balana-core.version>
 	</properties>
 
 	<dependencies>
@@ -64,6 +65,12 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		
+		<dependency>
+    		<groupId>org.wso2.balana</groupId>
+    		<artifactId>org.wso2.balana</artifactId>
+    		<version>${balana-core.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -88,7 +95,9 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven.surefire.version}</version>
 					<configuration>
-							<test>!it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties</test>								
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testConformance, 
+								  it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#testConformance
+						    </test>
         			</configuration>
 				</plugin>
 				<plugin>
@@ -172,7 +181,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${maven.surefire.version}</version>
 						<configuration>
-							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testConformance</test>
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testConformance</test>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -229,10 +238,69 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${maven.surefire.version}</version>
 						<configuration>
-<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties+testConformance</test>-->
-<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testSingleUseCaseByProperties</test>-->
-							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testUseCasesByProperty+testConformance</test>
-<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments.HerasafQueryTests#testUseCasesByProperty</test>-->
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testSingleUseCaseByProperties+testConformance</test>-->
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testSingleUseCaseByProperties</test>-->
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testUseCasesByProperty+testConformance</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testUseCasesByProperty</test>-->
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>balana-CT-Profile</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.jacoco</groupId>
+					<artifactId>org.jacoco.agent</artifactId>
+					<classifier>runtime</classifier>
+					<version>${jacoco.coverageExperiment.version}</version>
+				</dependency>
+<!--				<dependency>-->
+<!--					<groupId>org.herasaf.xacml.core</groupId>-->
+<!--					<artifactId>herasaf-xacml-core</artifactId>-->
+<!--					<version>${herasaf-xacml-core.version}</version>-->
+<!--					<scope>system</scope>-->
+<!--					<systemPath>${basedir}/src/test/resources/lib/fat-jars/herasaf-xacml-core-2.0.4-fat.jar</systemPath>-->
+<!--				</dependency>-->
+			</dependencies>
+			<properties>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco.coverageExperiment.version}</version>
+						<executions>
+							<!-- NOTE THAT AUTOMATIC REPORTING IS USELESS, AS THE SOURCE FILES 
+								OF balana ARE NEEDED: -->
+							<!-- GENERATE THE REPORTS OFFLINE AS DESCRIBED IN jacocolibSnippets.txt -->
+							<execution>
+								<id>prepareJacoccoAgent-ConformanceTests</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+								<configuration>
+<!--									<excludes>org.herasaf.xacml.core.*</excludes>-->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.0</version>
+					</plugin>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven.surefire.version}</version>
+						<configuration>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#testSingleConformanceUseCaseByProperty</test>-->
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#testConformance</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#reportIssuesTestingConformance</test>-->
 						</configuration>
 					</plugin>
 				</plugins>
