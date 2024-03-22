@@ -1,4 +1,4 @@
-package it.cnr.iasi.saks.cc.benchmark.xacml.tests.firstExperiments;
+package it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
