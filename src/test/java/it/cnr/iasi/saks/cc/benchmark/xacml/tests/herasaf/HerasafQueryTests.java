@@ -1,15 +1,10 @@
 package it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf;
 
-//import static org.junit.Assert.assertNotNull;
-//import static org.junit.Assert.assertThat;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
