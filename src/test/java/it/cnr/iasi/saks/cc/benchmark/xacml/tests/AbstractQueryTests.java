@@ -111,4 +111,90 @@ public abstract class AbstractQueryTests {
 		this.testConformance(testCase);
 	}
 
+	@Test
+	public void testUseCasesByProperty() throws Exception {
+		String idsListString = System.getProperty(IDS_PROPERTY_LABEL);
+		Assert.assertNotNull("The system's property \'" + IDS_PROPERTY_LABEL + "\' is null or not set", idsListString); 		
+		
+		String[] idsList = idsListString.split(IDS_SEPARATOR);
+		Assert.assertNotNull("The system's property \'" + IDS_PROPERTY_LABEL + "\' is null or not properly set", idsList); 
+		boolean processedAtLeastOnce = false;
+
+		for (String id : idsList) {
+			if (id != "") {
+				String policyID = id.split(POLICY_REQUEST_SEPARATOR)[0];
+				String requestID = id.split(POLICY_REQUEST_SEPARATOR)[1];
+
+				System.setProperty(MUTATED_POLICY_PROPERTY_LABEL,policyID);
+				System.setProperty(MUTATED_REQUEST_PROPERTY_LABEL,requestID);
+			
+				this.testSingleUseCaseByProperties();
+				processedAtLeastOnce = true;
+				this.undeployPolicies();
+			}
+		}
+		
+		Assert.assertTrue("The system's property \'" + IDS_PROPERTY_LABEL + "\' is wrongly set", processedAtLeastOnce);
+	}
+
+	@Test
+	public void testSingleUseCaseByProperties() throws Exception {
+		String policyID = System.getProperty(MUTATED_POLICY_PROPERTY_LABEL);
+
+//********************************************************
+//********************************************************
+		Assert.assertNotNull("The system's property \'" + MUTATED_POLICY_PROPERTY_LABEL + "\' is null or not set", policyID); 
+
+		this.testSingleUseCaseByProperties(policyID);
+//********************************************************
+//int counter=0;
+//int processed=0;
+//
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=10;
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+////String policyMarker="IIB003Policy_CCF_Mut_00000000"; int start=16; int end=23;
+////String policyMarker="IIC034Policy_CCF_Mut_00000000"; int start=18; int end=29;
+////String policyMarker="IIA001Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA001Policy_CCF_Mut_00000000"; int start=34; int end=34;
+////String policyMarker="IIA002Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA002Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=57;
+////String policyMarker="IIA003Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA003Policy_CCF_Mut_00000000"; int start=34; int end=34;
+////String policyMarker="IIA005Policy_ANR_Mut_00000000"; int start=10; int end=33;
+////String policyMarker="IIA005Policy_CCF_Mut_00000000"; /* int start=34; */ int start=39; int end=56;
+//String policyMarker="IIA006Policy_ANR_Mut_00000000"; int start=10; int end=57;
+////String policyMarker="IIIF006Policy_CCF_Mut_00000000";  int start=38; int end=38;
+//
+//for (int id = start; id <= end; id++) {	
+//	policyID=policyMarker+id;
+//
+//	List<String> mutatedRequestsWithResponseIDList = this.retreiveMutatedRequestsIDsWithResponse(policyID);
+//	for (String mutatedRequestsWithResponseID : mutatedRequestsWithResponseIDList) {
+//		try {
+//			processed++;
+////			System.err.println("§§§§§§§ Processing: "+ policyID + ", "+mutatedRequestsWithResponseID);
+//
+//			this.testSingleUseCaseByProperties(policyID, mutatedRequestsWithResponseID);
+// 		} catch (AssertionError e) {
+//// 		} catch (Throwable e) {
+//			counter++;
+//		}	
+//		this.undeployPolicies();
+//	}
+//}		
+//		System.err.println("Failed : "+counter+" over : "+processed);
+//********************************************************
+//********************************************************		
+	}
+
+	protected void testSingleUseCaseByProperties(String policyID) throws Exception {
+		String requestID = System.getProperty(MUTATED_REQUEST_PROPERTY_LABEL);
+		Assert.assertNotNull("The system's property \'" + MUTATED_REQUEST_PROPERTY_LABEL + "\' is null or not set", requestID); 
+		
+		this.testSingleUseCaseByProperties(policyID, requestID);
+	}
+
+	protected abstract void testSingleUseCaseByProperties(String policyID, String requestID)  throws Exception;
+
 }

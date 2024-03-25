@@ -377,6 +377,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${maven.surefire.version}</version>
 						<configuration>
+							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#testUseCasesByProperty+testConformance</test>
+<!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana.BalanaQueryTests#testUseCasesByProperty</test>-->
 						</configuration>
 					</plugin>
 				</plugins>
