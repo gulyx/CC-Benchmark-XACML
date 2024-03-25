@@ -65,6 +65,13 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+
+<!--		Remove the following dependency in order to enable again logging -->
+		<dependency>
+        	<groupId>org.slf4j</groupId>
+        	<artifactId>slf4j-nop</artifactId>
+        	<version>${slf4j.version}</version>
+    	</dependency> 
 		
 		<dependency>
     		<groupId>org.wso2.balana</groupId>
