@@ -145,10 +145,10 @@ TEST_LIST=""
 
 if [[ -z "${RANDOMIC_FLAG}" ]]
 then
-#    TUPLES_LIST=`cat ${LISTID_FILE}`
+    TUPLES_LIST=`cat ${LISTID_FILE}`
 #    TUPLES_LIST=`cat ./zac.txt`
 #    TUPLES_LIST=`head -n 1 ${LISTID_FILE}`
-    TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
+#    TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
 #    TUPLES_LIST=`head -n 34 ${LISTID_FILE}`
 #    TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n 10`
 #    TUPLES_LIST=`head -n 70 ${LISTID_FILE}`
