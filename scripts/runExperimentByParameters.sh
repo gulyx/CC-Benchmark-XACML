@@ -1,0 +1,294 @@
+#!/bin/bash
+
+
+LISTID_FILE="./listTupleFull.txt"
+MVN_PROJECT_DIR=".."
+SRC_DIR="${MVN_PROJECT_DIR}/src/main/java" 
+SRC_TEST_DIR="${MVN_PROJECT_DIR}/src/test/java"
+## TARGET_DIR=`mktemp -p /tmp -d CC-Benchmark-XACML-XXX`
+TUPLE_SEPARATOR='|'
+
+POLICYID_SYSTEM_PROPERTY_LABEL="policyID" 
+REQUESTID_SYSTEM_PROPERTY_LABEL="requestID"
+IDSLIST_SYSTEM_PROPERTY_LABEL="idsList"
+CT_LABEL="CONFORMANCE_TEST_SUITE"
+
+
+PATH_JACOCO_CLI_JAR="ToBeDefined"
+JACOCO_BIN_FILE="${MVN_PROJECT_DIR}/target/jacoco.exec"
+## JACOCO_OUTPUT_DIR="${TARGET_DIR}/XACML-Experiment/jacoco-gen"
+JACOCO_OUTPUT_DIR="${MVN_PROJECT_DIR}/target/XACML-Experiment/jacoco-gen"
+JACOCO_OUTPUT_FILE="${JACOCO_OUTPUT_DIR}/jacoco.csv"
+JACOCO_OUTPUT_FILE_XML="${JACOCO_OUTPUT_DIR}/jacoco.xml"
+JACOCO_CSV_SEPARATOR=','
+COVERAGE_INFO_PATTERN=""
+
+CSV_SEPARATOR="${JACOCO_CSV_SEPARATOR}"
+
+CT_PROFILE="DefinedBelowByMeansAProcessedOption"
+AT_PROFILE="DefinedBelowByMeansAProcessedOption"
+PATH_PDP_JAR="DefinedBelowByMeansAProcessedOption"
+PATH_PDP_SRC="DefinedBelowByMeansAProcessedOption"
+TARGET_PACKAGE="DefinedBelowByMeansAProcessedOption"
+
+
+if [[ -z "$1" ]]
+then
+    echo "USAGE: $0 --balana|--herasaf [--random <intNumber>]"
+    exit 1
+else
+    case "$1" in
+        "--balana" ) 
+            CT_PROFILE="balana-CT-Profile"
+            AT_PROFILE="balana-AdditionalTest-Profile"
+            PATH_PDP_JAR="ToBeDefined"
+            PATH_PDP_SRC="../src/test/resources/lib/sources/org.wso2.balana-1.2.12-sources.jar"
+            TARGET_PACKAGE="org.wso2.balana"
+        ;;
+        "--herasaf" ) 
+            CT_PROFILE="herasaf-CT-Profile"
+            AT_PROFILE="herasaf-AdditionalTest-Profile"
+            PATH_PDP_JAR="ToBeDefined"
+            PATH_PDP_SRC="../src/test/resources/lib/sources/herasaf-xacml-core-2.0.4-sources.jar"
+            TARGET_PACKAGE="org.herasaf.xacml"
+        ;;
+    esac
+fi
+
+if [[ "$2" == "--random" && -n "$3" ]]
+then
+    RANDOMIC_FLAG="$3"
+else
+    RANDOMIC_FLAG=""
+fi
+
+# echo "$CT_PROFILE $AT_PROFILE $PATH_PDP_JAR $PATH_PDP_SRC $TARGET_PACKAGE"
+# exit 1
+TMP_FILE_=`mktemp -p /tmp`
+
+### Calcolare qui la coverage di CT
+cd ${MVN_PROJECT_DIR}
+mvn -P ${CT_PROFILE} clean test
+LAST_BUILD_STATUS="$?"
+cd -
+
+echo "------------------ LAST_BUILD_STATUS: ${LAST_BUILD_STATUS}, JACOCO_BIN_FILE: ${JACOCO_BIN_FILE} ------------------"
+if [[ "${LAST_BUILD_STATUS}" -eq 0 && -e ${JACOCO_BIN_FILE} ]]
+then
+    mkdir -p ${JACOCO_OUTPUT_DIR}
+    java -jar ${PATH_JACOCO_CLI_JAR} report ${JACOCO_BIN_FILE} --classfiles ${PATH_PDP_JAR} --sourcefiles ${PATH_PDP_SRC} --html ${JACOCO_OUTPUT_DIR} --xml ${JACOCO_OUTPUT_FILE_XML} --csv ${JACOCO_OUTPUT_FILE}
+    
+    COVERAGE_INFO_PATTERN=`echo "${TARGET_PACKAGE}" | tr '/' '.'`
+    
+    COVERAGE_STMS="0"
+    COVERAGE_BRANCH="0"
+    COVERAGE_LINE="0"
+    COVERAGE_COMPLEXITY="0"
+    COVERAGE_MISSED_STMS="0"
+    COVERAGE_MISSED_BRANCH="0"
+    COVERAGE_MISSED_LINE="0"
+    COVERAGE_MISSED_COMPLEXITY="0"
+    TEST_LIST="${CT_LABEL}"                    
+    
+    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}"`
+    do
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
+        (( COVERAGE_STMS=COVERAGE_STMS+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 7`
+        (( COVERAGE_BRANCH=COVERAGE_BRANCH+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 9`
+        (( COVERAGE_LINE=COVERAGE_LINE+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 11`
+        (( COVERAGE_COMPLEXITY=COVERAGE_COMPLEXITY+COUNTER ))
+
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 4`
+        (( COVERAGE_MISSED_STMS=COVERAGE_MISSED_STMS+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 6`
+        (( COVERAGE_MISSED_BRANCH=COVERAGE_MISSED_BRANCH+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 8`
+        (( COVERAGE_MISSED_LINE=COVERAGE_MISSED_LINE+COUNTER ))
+        COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 10`
+        (( COVERAGE_MISSED_COMPLEXITY=COVERAGE_MISSED_COMPLEXITY+COUNTER ))
+    done                
+
+    INITIAL_COVERAGE_STMS="${COVERAGE_STMS}"
+    INITIAL_COVERAGE_BRANCH="${COVERAGE_BRANCH}"
+    INITIAL_COVERAGE_LINE="${COVERAGE_LINE}"
+    INITIAL_COVERAGE_COMPLEXITY="${COVERAGE_COMPLEXITY}"
+
+    INITIAL_COVERAGE_MISSED_STMS="${COVERAGE_MISSED_STMS}"
+    INITIAL_COVERAGE_MISSED_BRANCH="${COVERAGE_MISSED_BRANCH}"
+    INITIAL_COVERAGE_MISSED_LINE="${COVERAGE_MISSED_LINE}"
+    INITIAL_COVERAGE_MISSED_COMPLEXITY="${COVERAGE_MISSED_COMPLEXITY}"
+
+    INITIAL_COVERAGE_STMS_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_STMS})/(${INITIAL_COVERAGE_STMS} + ${INITIAL_COVERAGE_MISSED_STMS}))*100)" | bc -l`
+#
+    ((INITIAL_TOTAL_COVERAGE_BRANCH=INITIAL_COVERAGE_BRANCH + INITIAL_COVERAGE_MISSED_BRANCH))
+    if [[ "${INITIAL_TOTAL_COVERAGE_BRANCH}" -gt "0" ]]
+    then
+        INITIAL_COVERAGE_BRANCH_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_BRANCH})/(${INITIAL_TOTAL_COVERAGE_BRANCH}))*100)" | bc -l`
+    else
+        INITIAL_COVERAGE_BRANCH_PERCENTUAL="100.00"
+    fi
+#
+    INITIAL_COVERAGE_LINE_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_LINE})/(${INITIAL_COVERAGE_LINE} + ${INITIAL_COVERAGE_MISSED_LINE}))*100)" | bc -l`
+    INITIAL_COVERAGE_COMPLEXITY_PERCENTUAL=`echo "scale=2; (((${INITIAL_COVERAGE_COMPLEXITY})/(${INITIAL_COVERAGE_COMPLEXITY} + ${INITIAL_COVERAGE_MISSED_COMPLEXITY}))*100)" | bc -l`        
+    
+    INITIAL_TEST_LIST=${TEST_LIST}
+    INITIAL_TEST_LIST_SIZE=`echo ${INITIAL_TEST_LIST} | sed "s/^[[:blank:]]*,//" | sed "s/,[[:blank:]]*$//" | wc -w`
+else
+    echo "There was some problem in the computation of the coverage for the CT"
+    exit 1
+fi
+
+TEST_LIST=""
+
+if [[ -z "${RANDOMIC_FLAG}" ]]
+then
+#    TUPLES_LIST=`cat ${LISTID_FILE}`
+#    TUPLES_LIST=`cat ./zac.txt`
+#    TUPLES_LIST=`head -n 1 ${LISTID_FILE}`
+    TUPLES_LIST=`head -n 2 ${LISTID_FILE}`
+#    TUPLES_LIST=`head -n 34 ${LISTID_FILE}`
+#    TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n 10`
+#    TUPLES_LIST=`head -n 70 ${LISTID_FILE}`
+else
+    TUPLES_LIST=`cat ${LISTID_FILE} | shuf | head -n ${RANDOMIC_FLAG}`
+fi
+
+TOTAL_TUPLES_TO_BE_PROCESSED=`echo ${TUPLES_LIST} | wc -w`
+TUPLES_PROCESSED="0"
+
+for TUPLE in ${TUPLES_LIST}
+do
+    ID_POLICY=`echo ${TUPLE} | cut -d "${TUPLE_SEPARATOR}" -f 1`
+    ID_REQUEST=`echo ${TUPLE} | cut -d "${TUPLE_SEPARATOR}" -f 2`
+    
+    (( TUPLES_PROCESSED=TUPLES_PROCESSED+1 ))
+    echo "(${TUPLES_PROCESSED} / ${TOTAL_TUPLES_TO_BE_PROCESSED}) Processing Group: ${ID_POLICY}, ${ID_REQUEST} ..."
+          
+    NEW_COVERAGE_STMS="0"
+    NEW_COVERAGE_BRANCH="0"
+    NEW_COVERAGE_LINE="0"
+    NEW_COVERAGE_COMPLEXITY="0"
+    NEW_COVERAGE_MISSED_STMS="0"
+    NEW_COVERAGE_MISSED_BRANCH="0"
+    NEW_COVERAGE_MISSED_LINE="0"
+    NEW_COVERAGE_MISSED_COMPLEXITY="0"
+    CURRENT_TEST_LIST="${ID_POLICY}:${ID_REQUEST},${TEST_LIST}"                    
+    
+    rm -rf ${JACOCO_BIN_FILE}
+    rm -rf ${JACOCO_OUTPUT_DIR}
+    cd ${MVN_PROJECT_DIR}
+    mkdir -p ${JACOCO_OUTPUT_DIR}
+#    mvn -D${POLICYID_SYSTEM_PROPERTY_LABEL}="${ID_POLICY}" -D${REQUESTID_SYSTEM_PROPERTY_LABEL}="${ID_REQUEST}" test
+    echo "mvn -P${AT_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}=\"${CURRENT_TEST_LIST}\" test"
+    mvn -P${AT_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}="${CURRENT_TEST_LIST}" test
+    LAST_BUILD_STATUS="$?"
+    cd -
+
+    echo "------------------ LAST_BUILD_STATUS: ${LAST_BUILD_STATUS}, JACOCO_BIN_FILE: ${JACOCO_BIN_FILE} ------------------"
+    if [[ "${LAST_BUILD_STATUS}" -eq 0 && -e ${JACOCO_BIN_FILE} ]]
+    then
+        mkdir -p ${JACOCO_OUTPUT_DIR}
+        java -jar ${PATH_JACOCO_CLI_JAR} report ${JACOCO_BIN_FILE} --classfiles ${PATH_PDP_JAR} --sourcefiles ${PATH_PDP_SRC} --html ${JACOCO_OUTPUT_DIR} --xml ${JACOCO_OUTPUT_FILE_XML} --csv ${JACOCO_OUTPUT_FILE}
+
+        COVERAGE_INFO_PATTERN=`echo "${TARGET_PACKAGE}" | tr '/' '.'`
+                
+        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}"`
+        do
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
+            (( NEW_COVERAGE_STMS=NEW_COVERAGE_STMS+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 7`
+            (( NEW_COVERAGE_BRANCH=NEW_COVERAGE_BRANCH+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 9`
+            (( NEW_COVERAGE_LINE=NEW_COVERAGE_LINE+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 11`
+            (( NEW_COVERAGE_COMPLEXITY=NEW_COVERAGE_COMPLEXITY+COUNTER ))
+
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 4`
+            (( NEW_COVERAGE_MISSED_STMS=NEW_COVERAGE_MISSED_STMS+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 6`
+            (( NEW_COVERAGE_MISSED_BRANCH=NEW_COVERAGE_MISSED_BRANCH+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 8`
+            (( NEW_COVERAGE_MISSED_LINE=NEW_COVERAGE_MISSED_LINE+COUNTER ))
+            COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 10`
+            (( NEW_COVERAGE_MISSED_COMPLEXITY=NEW_COVERAGE_MISSED_COMPLEXITY+COUNTER ))
+        done                
+                       
+       ((IS_COVERAGE_IMPROVED=(${NEW_COVERAGE_STMS}>${COVERAGE_STMS}) || (${NEW_COVERAGE_BRANCH}>${COVERAGE_BRANCH}) || (${NEW_COVERAGE_LINE}>${COVERAGE_LINE}) || (${NEW_COVERAGE_COMPLEXITY}>${COVERAGE_COMPLEXITY}) ))
+                
+       echo "STMS: ${NEW_COVERAGE_STMS} VS. ${COVERAGE_STMS}"
+       echo "BRANCH: ${NEW_COVERAGE_BRANCH} VS. ${COVERAGE_BRANCH}"
+       echo "LINE: ${NEW_COVERAGE_LINE} VS. ${COVERAGE_LINE}"
+       echo "COMPLEXITY: ${NEW_COVERAGE_COMPLEXITY} VS. ${COVERAGE_COMPLEXITY}"
+       if [[ "${IS_COVERAGE_IMPROVED}" -eq "1" ]]
+       then
+            # some coverage increases
+            echo "WOW ... some coverage index got an improvement"
+
+            if [[ "${NEW_COVERAGE_STMS}" -gt "${COVERAGE_STMS}" ]]
+            then
+                COVERAGE_STMS="${NEW_COVERAGE_STMS}"
+                COVERAGE_MISSED_STMS="${NEW_COVERAGE_MISSED_STMS}"
+            fi
+                    
+            if [[ "${NEW_COVERAGE_BRANCH}" -gt "${COVERAGE_BRANCH}" ]]
+            then
+                COVERAGE_BRANCH="${NEW_COVERAGE_BRANCH}"
+                COVERAGE_MISSED_BRANCH="${NEW_COVERAGE_MISSED_BRANCH}"
+            fi
+                    
+            if [[ "${NEW_COVERAGE_LINE}" -gt "${COVERAGE_LINE}" ]]
+            then
+                COVERAGE_LINE="${NEW_COVERAGE_LINE}"
+                COVERAGE_MISSED_LINE="${NEW_COVERAGE_MISSED_LINE}"
+            fi
+                    
+            if [[ "${NEW_COVERAGE_COMPLEXITY}" -gt "${COVERAGE_COMPLEXITY}" ]]
+            then
+                COVERAGE_COMPLEXITY="${NEW_COVERAGE_COMPLEXITY}"
+                COVERAGE_MISSED_COMPLEXITY="${NEW_COVERAGE_MISSED_COMPLEXITY}"
+            fi
+                                        
+            TEST_LIST="${CURRENT_TEST_LIST}"
+        else
+            echo "No improvement for any of the coverage indexes"
+        fi
+    else
+        echo "[RESULT-TESTS] Some failure for PolicyID: ${ID_POLICY}, RequestID: ${ID_REQUEST}. It was not possible to check the improvement for any of the coverage indexes"        
+    fi
+    echo "... done!"
+    sleep 2
+        
+# exit    
+# if [[ "${STOP_IT}" -eq "1" ]]
+# then
+#    exit
+# else
+#     STOP_IT="1" 
+# fi
+done
+
+COVERAGE_STMS_PERCENTUAL=`echo "scale=2; (((${COVERAGE_STMS})/(${COVERAGE_STMS} + ${COVERAGE_MISSED_STMS}))*100)" | bc -l`
+#        
+#echo "@@@@@ ${COVERAGE_BRANCH_PERCENTUAL} ${COVERAGE_BRANCH} ${COVERAGE_MISSED_BRANCH}"        
+((TOTAL_COVERAGE_BRANCH=COVERAGE_BRANCH + COVERAGE_MISSED_BRANCH))
+if [[ "${TOTAL_COVERAGE_BRANCH}" -gt "0" ]]
+then
+    COVERAGE_BRANCH_PERCENTUAL=`echo "scale=2; (((${COVERAGE_BRANCH})/(${TOTAL_COVERAGE_BRANCH}))*100)" | bc -l`
+else
+    COVERAGE_BRANCH_PERCENTUAL="100.00"
+fi
+#        
+COVERAGE_LINE_PERCENTUAL=`echo "scale=2; (((${COVERAGE_LINE})/(${COVERAGE_LINE} + ${COVERAGE_MISSED_LINE}))*100)" | bc -l`
+COVERAGE_COMPLEXITY_PERCENTUAL=`echo "scale=2; (((${COVERAGE_COMPLEXITY})/(${COVERAGE_COMPLEXITY} + ${COVERAGE_MISSED_COMPLEXITY}))*100)" | bc -l`
+
+TEST_LIST_SIZE=`echo ${TEST_LIST} | sed "s/^[[:blank:]]*,//" | sed "s/,[[:blank:]]*$//" | sed 's/,/ /g' | wc -w`
+
+echo "[RESULT-TESTS] The addition tests to the ConformanceTestSuite are: ${TEST_LIST}"
+echo "[RESULT-CSV-LABELS] STMS${CSV_SEPARATOR} BRANCH${CSV_SEPARATOR} LINE${CSV_SEPARATOR} COMPLEXITY${CSV_SEPARATOR} Test List Size${CSV_SEPARATOR} Test List"
+echo "[RESULT-CSV-INITIAL-COVERAGE] ${INITIAL_COVERAGE_STMS}${CSV_SEPARATOR} ${INITIAL_COVERAGE_BRANCH}${CSV_SEPARATOR} ${INITIAL_COVERAGE_LINE}${CSV_SEPARATOR} ${INITIAL_COVERAGE_COMPLEXITY}${CSV_SEPARATOR} ${INITIAL_TEST_LIST_SIZE}${CSV_SEPARATOR} ${INITIAL_TEST_LIST}"
+echo "[RESULT-CSV-INITIAL-COVERAGE-PERCENTUAL] ${INITIAL_COVERAGE_STMS_PERCENTUAL}%${CSV_SEPARATOR} ${INITIAL_COVERAGE_BRANCH_PERCENTUAL}%${CSV_SEPARATOR} ${INITIAL_COVERAGE_LINE_PERCENTUAL}%${CSV_SEPARATOR} ${INITIAL_COVERAGE_COMPLEXITY_PERCENTUAL}%${CSV_SEPARATOR} ${INITIAL_TEST_LIST_SIZE}${CSV_SEPARATOR} ${INITIAL_TEST_LIST}"
+echo "[RESULT-CSV-FINAL-COVERAGE] ${COVERAGE_STMS}${CSV_SEPARATOR} ${COVERAGE_BRANCH}${CSV_SEPARATOR} ${COVERAGE_LINE}${CSV_SEPARATOR} ${COVERAGE_COMPLEXITY}${CSV_SEPARATOR} ${TEST_LIST_SIZE}${CSV_SEPARATOR} ${TEST_LIST}"
+echo "[RESULT-CSV-FINAL-COVERAGE-PERCENTUAL] ${COVERAGE_STMS_PERCENTUAL}%${CSV_SEPARATOR} ${COVERAGE_BRANCH_PERCENTUAL}%${CSV_SEPARATOR} ${COVERAGE_LINE_PERCENTUAL}%${CSV_SEPARATOR} ${COVERAGE_COMPLEXITY_PERCENTUAL}%${CSV_SEPARATOR} ${TEST_LIST_SIZE}${CSV_SEPARATOR} ${TEST_LIST}"
