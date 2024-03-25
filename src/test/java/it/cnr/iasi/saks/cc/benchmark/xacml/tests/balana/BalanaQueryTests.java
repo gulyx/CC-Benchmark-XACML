@@ -1,10 +1,14 @@
 package it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -14,10 +18,12 @@ import org.junit.Assert;
 import org.wso2.balana.Balana;
 import org.wso2.balana.PDP;
 import org.wso2.balana.PDPConfig;
+import org.wso2.balana.ParsingException;
 import org.wso2.balana.ctx.AbstractRequestCtx;
 import org.wso2.balana.ctx.ResponseCtx;
 import org.wso2.balana.finder.PolicyFinder;
 import org.wso2.balana.finder.PolicyFinderModule;
+import org.xml.sax.SAXException;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
 import org.xmlunit.matchers.CompareMatcher;
@@ -118,7 +124,7 @@ public class BalanaQueryTests extends AbstractQueryTests {
 	}
 
 	@Override
-	protected void testSingleUseCaseByProperties(String policyID, String requestID) throws Exception {
+	protected void testSingleUseCaseByProperties(String policyID, String requestID) throws SyntaxException, ParserConfigurationException, SAXException, IOException, TransformerException, ParsingException {
 		System.err.println("§§§§§§§ Processing: "+ policyID + ", "+requestID);
 
 		this.deployPolicy(MUTATED_POLICY_FILE_PATTERN, policyID);
