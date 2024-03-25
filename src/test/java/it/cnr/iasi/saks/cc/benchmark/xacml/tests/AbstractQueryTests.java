@@ -71,13 +71,15 @@ public abstract class AbstractQueryTests {
 	@Test
 	public void testConformance() throws Exception {
 		List<String> testCasesIDList = this.retreiveConformanceTestCasesIDs();
+		System.err.println("[Conformance Test Suite] Start Processing Conformance Policies ... ");
 		for (String testID : testCasesIDList) {
-			System.err.println("Processing Conformance Policy: " + testID);
+//			System.err.println("Processing Conformance Policy: " + testID);
 
 			this.testConformance(testID);
 
 			this.undeployPolicies();
 		}
+		System.err.println("[Conformance Test Suite] ... done");
 	}
 
 	protected List<String> retreiveConformanceTestCasesIDs() throws FileNotFoundException {
