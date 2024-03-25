@@ -3,17 +3,14 @@ package it.cnr.iasi.saks.cc.benchmark.xacml.tests.balana;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.herasaf.xacml.core.SyntaxException;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Test;
 import org.wso2.balana.Balana;
 import org.wso2.balana.PDP;
 import org.wso2.balana.PDPConfig;
@@ -95,7 +92,6 @@ public class BalanaQueryTests extends AbstractQueryTests {
 //			Assert.assertThat(response, CompareMatcher.isSimilarTo(expectedResponse).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
 			Assert.assertThat(response, CompareMatcher.isSimilarTo(expectedResponse).withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes)).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
 		}	
-
 	}
 	
 //	@Test
@@ -119,6 +115,35 @@ public class BalanaQueryTests extends AbstractQueryTests {
 		for (String id : testCasesWithProblems) {
 			System.err.println(id);
 		}
+	}
+
+	@Override
+	protected void testSingleUseCaseByProperties(String policyID, String requestID) throws Exception {
+		System.err.println("§§§§§§§ Processing: "+ policyID + ", "+requestID);
+
+		this.deployPolicy(MUTATED_POLICY_FILE_PATTERN, policyID);
+		
+		AbstractRequestCtx requestCtx = BalanaUtil.loadRequestByPath(MUTATED_REQUEST_FILE_PATTERN, policyID, requestID);
+		ResponseCtx expectedResponseCtx = BalanaUtil.loadResponseByPath(MUTATED_RESPONSE_FILE_PATTERN, policyID, requestID);
+
+		ResponseCtx responseCtx = this.balanaPDP.evaluate(requestCtx);
+
+		String expectedResponse = expectedResponseCtx.encode();
+		String response = responseCtx.encode();
+		
+		XMLUnit.setIgnoreWhitespace(true);
+		XMLUnit.setIgnoreAttributeOrder(true);
+		String strictComparison = System.getProperty(STRICT_COMPARISON_FLAG_LABEL);		
+		if ((strictComparison != null) && (!strictComparison.equalsIgnoreCase("false"))) {
+			XMLAssert.assertXMLEqual("Testcase <Policy,Request>: <" + policyID + ", " + requestID +"> failed!", expectedResponse, response);
+		} else {				
+//			Assert.assertThat(response, CompareMatcher.isIdenticalTo(expectedResponse).withAttributeFilter(a -> !"ResourceId".equals(a.getName())));
+//			Assert.assertThat(response, CompareMatcher.isIdenticalTo(expectedResponse).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"StatusDetail".equals(node.getNodeName())));
+//			Assert.assertThat(CompareMatcher.isIdenticalTo(response).withNodeFilter(node -> !"StatusMessage".equals(node.getNodeName())), CompareMatcher.isIdenticalTo(expectedResponse).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"StatusDetail".equals(node.getNodeName())));
+//			Assert.assertThat(response, CompareMatcher.isIdenticalTo(expectedResponse).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
+//			Assert.assertThat(response, CompareMatcher.isSimilarTo(expectedResponse).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
+			Assert.assertThat(response, CompareMatcher.isSimilarTo(expectedResponse).withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes)).withAttributeFilter(attr -> !"ResourceId".equals(attr.getName())).withNodeFilter(node -> !"Status".equals(node.getNodeName())));
+		}	
 	}
 
 	
