@@ -197,8 +197,9 @@ do
 
         COVERAGE_INFO_PATTERN=`echo "${TARGET_PACKAGE}" | tr '/' '.'`
                 
-        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}"`
+        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
         do
+# echo "Processing: ${COVERAGE_INFO}"	
             COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
             (( NEW_COVERAGE_STMS=NEW_COVERAGE_STMS+COUNTER ))
             COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 7`
@@ -271,6 +272,7 @@ do
 #     STOP_IT="1" 
 # fi
 done
+TEST_LIST="${CT_LABEL},${TEST_LIST}"                    
 
 COVERAGE_STMS_PERCENTUAL=`echo "scale=2; (((${COVERAGE_STMS})/(${COVERAGE_STMS} + ${COVERAGE_MISSED_STMS}))*100)" | bc -l`
 #        
