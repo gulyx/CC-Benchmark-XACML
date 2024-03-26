@@ -31,6 +31,7 @@ PATH_HERASAF_SRC="../src/test/resources/lib/sources/herasaf-xacml-core-2.0.4-sou
 CSV_SEPARATOR="${JACOCO_CSV_SEPARATOR}"
 
 TARGET_PACKAGE="org.herasaf.xacml"
+BLANK_PLACE_HOLDER="§"
 
 if [[ "$1" == "--random" && -n "$2" ]]
 then
@@ -64,9 +65,10 @@ then
     COVERAGE_MISSED_LINE="0"
     COVERAGE_MISSED_COMPLEXITY="0"
     TEST_LIST="${CT_LABEL}"                    
-    
-    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}"`
+
+    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
     do
+# echo "Processing: ${COVERAGE_INFO}"	
         COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
         (( COVERAGE_STMS=COVERAGE_STMS+COUNTER ))
         COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 7`
