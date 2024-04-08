@@ -4,7 +4,7 @@
     <Status>
       <StatusCode Value="urn:oasis:names:tc:xacml:1.0:status:ok"/>
     </Status>
-    <Obligations>
+    <Obligations xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os">
       <Obligation ObligationId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA014:policy1:obligation-3" FulfillOn="Deny">
         <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA014:policy1:assignment1" DataType="http://www.w3.org/2001/XMLSchema#string">assignment1</AttributeAssignment>
         <AttributeAssignment AttributeId="urn:oasis:names:tc:xacml:2.0:conformance-test:IIIA014:policy1:assignment2" DataType="http://www.w3.org/2001/XMLSchema#string">assignment2</AttributeAssignment>
