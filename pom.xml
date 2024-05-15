@@ -29,6 +29,8 @@
 		<slf4j.version>1.7.32</slf4j.version>
 
 		<balana-core.version>1.2.12</balana-core.version>
+		
+		<pitest.coverageExperiment.version>1.15.8</pitest.coverageExperiment.version>
 	</properties>
 
 	<dependencies>
@@ -249,6 +251,82 @@
 <!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testSingleUseCaseByProperties</test>-->
 							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testUseCasesByProperty+testConformance</test>
 <!--							<test>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.HerasafQueryTests#testUseCasesByProperty</test>-->
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>herasaf-Mutation-Profile</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest.coverageExperiment.version}</version>
+					<type>maven-plugin</type>
+				</dependency>
+<!--				<dependency>-->
+<!--					<groupId>org.jacoco</groupId>-->
+<!--					<artifactId>org.jacoco.agent</artifactId>-->
+<!--					<classifier>runtime</classifier>-->
+<!--					<version>${jacoco.coverageExperiment.version}</version>-->
+<!--				</dependency>-->
+				<dependency>
+					<groupId>org.herasaf.xacml.core</groupId>
+					<artifactId>herasaf-xacml-core</artifactId>
+					<version>${herasaf-xacml-core.version}</version>
+<!--					<scope>system</scope>-->
+<!--					<systemPath>${basedir}/src/test/resources/lib/fat-jars/herasaf-xacml-core-2.0.4-fat.jar</systemPath>-->
+				</dependency>
+			</dependencies>
+			<properties>
+				<pit.build.depencenciesDirectory>${project.build.directory}/dependency</pit.build.depencenciesDirectory>
+<!--				<pit.build.depencenciesDirectory>${project.build.directory}/classes</pit.build.depencenciesDirectory>-->
+			</properties>
+			<build>
+				<plugins>
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-dependency-plugin</artifactId>-->
+<!--						<version>3.6.1</version>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>copy-dependencies</id>-->
+<!--								<phase>prepare-package</phase>-->
+<!--								<goals>-->
+<!--									<goal>copy-dependencies</goal>-->
+<!--								</goals>-->
+<!--								<configuration>-->
+<!--											<outputDirectory>${pit.build.depencenciesDirectory}</outputDirectory>-->
+<!--											<overWriteReleases>false</overWriteReleases>-->
+<!--											<overWriteSnapshots>false</overWriteSnapshots>-->
+<!--											<overWriteIfNewer>true</overWriteIfNewer>-->
+<!--									 other configurations here -->
+<!--								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+-->					
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<version>${pitest.coverageExperiment.version}</version>
+						<configuration>
+							<verbose>true</verbose>
+							<targetClasses>								
+								<param>org.herasaf.xacml.core.*</param>								
+							</targetClasses>
+							<targetTests>
+								<param>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.DummyTests</param>
+							</targetTests>
+							<avoidCallsTo>
+    							<avoidCallsTo>org.apache.log4j</avoidCallsTo>
+    							<avoidCallsTo>org.slf4j</avoidCallsTo>
+    							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+							</avoidCallsTo>
 						</configuration>
 					</plugin>
 				</plugins>
