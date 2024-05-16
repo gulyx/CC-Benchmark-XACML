@@ -268,26 +268,43 @@
 					<version>${pitest.coverageExperiment.version}</version>
 					<type>maven-plugin</type>
 				</dependency>
-<!--				<dependency>-->
-<!--					<groupId>org.jacoco</groupId>-->
-<!--					<artifactId>org.jacoco.agent</artifactId>-->
-<!--					<classifier>runtime</classifier>-->
-<!--					<version>${jacoco.coverageExperiment.version}</version>-->
-<!--				</dependency>-->
 				<dependency>
 					<groupId>org.herasaf.xacml.core</groupId>
 					<artifactId>herasaf-xacml-core</artifactId>
 					<version>${herasaf-xacml-core.version}</version>
-<!--					<scope>system</scope>-->
-<!--					<systemPath>${basedir}/src/test/resources/lib/fat-jars/herasaf-xacml-core-2.0.4-fat.jar</systemPath>-->
 				</dependency>
 			</dependencies>
 			<properties>
-				<pit.build.depencenciesDirectory>${project.build.directory}/dependency</pit.build.depencenciesDirectory>
-<!--				<pit.build.depencenciesDirectory>${project.build.directory}/classes</pit.build.depencenciesDirectory>-->
+<!--				<pit.build.depencenciesDirectory>${project.build.directory}/dependency</pit.build.depencenciesDirectory>-->
+				<pit.build.depencenciesDirectory>${project.build.directory}/classes</pit.build.depencenciesDirectory>
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+					    <groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-dependency-plugin</artifactId>
+					    <executions>
+					        <execution>
+					            <id>unpack</id>
+					            <phase>process-resources</phase>
+					            <goals>
+					                <goal>unpack</goal>
+					            </goals>
+					            <configuration>					              
+                                    <outputDirectory>${pit.build.depencenciesDirectory}</outputDirectory>
+					                <artifactItems>
+					                    <artifactItem>
+					<groupId>org.herasaf.xacml.core</groupId>
+					<artifactId>herasaf-xacml-core</artifactId>
+					<version>${herasaf-xacml-core.version}</version>
+					                        <type>jar</type>
+					                    </artifactItem>
+					                </artifactItems>
+					            </configuration>
+					        </execution>
+					    </executions>
+					</plugin>
+
 					<plugin>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-maven</artifactId>
@@ -298,7 +315,8 @@
 								<param>org.herasaf.xacml.core.*</param>								
 							</targetClasses>
 							<targetTests>
-								<param>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.DummyTests</param>
+<!--								<param>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.DummyTest</param>-->
+								<param>it.cnr.iasi.saks.cc.benchmark.xacml.mutationExperiment.herasaf.HerasafMutationExperiment</param>
 							</targetTests>
 							<avoidCallsTo>
     							<avoidCallsTo>org.apache.log4j</avoidCallsTo>
@@ -447,5 +465,77 @@
 				</plugins>
 			</build>
 		</profile>		
+		<profile>
+			<id>balana-Mutation-Profile</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest.coverageExperiment.version}</version>
+					<type>maven-plugin</type>
+				</dependency>
+				<dependency>
+		    		<groupId>org.wso2.balana</groupId>
+    				<artifactId>org.wso2.balana</artifactId>
+    				<version>${balana-core.version}</version>
+				</dependency>
+			</dependencies>
+			<properties>
+<!--				<pit.build.depencenciesDirectory>${project.build.directory}/dependency</pit.build.depencenciesDirectory>-->
+				<pit.build.depencenciesDirectory>${project.build.directory}/classes</pit.build.depencenciesDirectory>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+					    <groupId>org.apache.maven.plugins</groupId>
+					    <artifactId>maven-dependency-plugin</artifactId>
+					    <executions>
+					        <execution>
+					            <id>unpack</id>
+					            <phase>process-resources</phase>
+					            <goals>
+					                <goal>unpack</goal>
+					            </goals>
+					            <configuration>					              
+                                    <outputDirectory>${pit.build.depencenciesDirectory}</outputDirectory>
+					                <artifactItems>
+					                    <artifactItem>
+		    		<groupId>org.wso2.balana</groupId>
+    				<artifactId>org.wso2.balana</artifactId>
+    				<version>${balana-core.version}</version>
+					                        <type>jar</type>
+					                    </artifactItem>
+					                </artifactItems>
+					            </configuration>
+					        </execution>
+					    </executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<version>${pitest.coverageExperiment.version}</version>
+						<configuration>
+							<verbose>true</verbose>
+							<targetClasses>								
+								<param>org.wso2.balana.*</param>								
+							</targetClasses>
+							<targetTests>
+<!--								<param>it.cnr.iasi.saks.cc.benchmark.xacml.tests.herasaf.DummyTest</param>-->
+								<param>it.cnr.iasi.saks.cc.benchmark.xacml.mutationExperiment.balana.BalanaMutationExperiment</param>
+							</targetTests>
+							<avoidCallsTo>
+    							<avoidCallsTo>org.apache.log4j</avoidCallsTo>
+    							<avoidCallsTo>org.slf4j</avoidCallsTo>
+    							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+							</avoidCallsTo>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>
