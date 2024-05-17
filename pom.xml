@@ -30,7 +30,7 @@
 
 		<balana-core.version>1.2.12</balana-core.version>
 		
-		<pitest.coverageExperiment.version>1.15.8</pitest.coverageExperiment.version>
+		<pitest.coverageExperiment.version>1.15.8</pitest.coverageExperiment.version>		
 	</properties>
 
 	<dependencies>
@@ -323,6 +323,9 @@
     							<avoidCallsTo>org.slf4j</avoidCallsTo>
     							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
 							</avoidCallsTo>
+<jvmArgs>
+	<jvmArg>-DidsList=${idsList}</jvmArg>
+</jvmArgs>							
 						</configuration>
 					</plugin>
 				</plugins>
@@ -532,6 +535,9 @@
     							<avoidCallsTo>org.slf4j</avoidCallsTo>
     							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
 							</avoidCallsTo>
+<jvmArgs>
+	<jvmArg>-DidsList=${idsList}</jvmArg>
+</jvmArgs>							
 						</configuration>
 					</plugin>
 				</plugins>
