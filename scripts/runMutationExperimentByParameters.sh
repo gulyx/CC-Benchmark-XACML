@@ -126,7 +126,7 @@ do
 
     cd ${MVN_PROJECT_DIR}
     echo "mvn -P${MUTATION_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}=\"${TEST_LIST}\" clean package org.pitest:pitest-maven:mutationCoverage"
-#    mvn -P${MUTATION_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}="${TEST_LIST}" clean package org.pitest:pitest-maven:mutationCoverage
+    mvn -P${MUTATION_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}="${TEST_LIST}" clean package org.pitest:pitest-maven:mutationCoverage
     cd -
     
     if [[ -z "${LOCAL_TARGET_DIR}" ]]
