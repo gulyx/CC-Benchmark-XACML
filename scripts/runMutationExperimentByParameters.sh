@@ -68,16 +68,16 @@ else
     case "$3" in
         "cc" ) 
             LISTID_FILE="${LISTID_FILE_CC}"
-            LOCAL_TARGET_DIR=""
+            OUTPUT_TARGET_DIR=""
         ;;    
         "random" ) 
             LISTID_FILE="${LISTID_FILE_RANDOM}"
             MAX_ITERATIONS="25"
-            LOCAL_TARGET_DIR="${LOCAL_TARGET_DIR_PREFIX}-Random-DoubleCheck"
+            OUTPUT_TARGET_DIR="${LOCAL_TARGET_DIR_PREFIX}-Random-DoubleCheck"
         ;;
         "fast" ) 
             LISTID_FILE="${LISTID_FILE_FAST}"
-            LOCAL_TARGET_DIR=""
+            OUTPUT_TARGET_DIR=""
         ;;
         * ) 
             echo "UNSUPPORTED VARIANT"
@@ -129,11 +129,11 @@ do
     mvn -P${MUTATION_PROFILE} -D${IDSLIST_SYSTEM_PROPERTY_LABEL}="${TEST_LIST}" clean package org.pitest:pitest-maven:mutationCoverage
     cd -
     
-    if [[ -z "${LOCAL_TARGET_DIR}" ]]
+    if [[ -z "${OUTPUT_TARGET_DIR}" ]]
     then
         echo "[RESULT-TESTS] The experiments is over, check the results in \"${MVN_PROJECT_DIR}/target/pit-reports\" (if any)"
     else
-        LOCAL_TARGET_DIR="${LOCAL_TARGET_DIR}/pit-reports-${ITERATION}"
+        LOCAL_TARGET_DIR="${OUTPUT_TARGET_DIR}/pit-reports-${ITERATION}"
         mkdir -p ${LOCAL_TARGET_DIR}
         mv "${MVN_PROJECT_DIR}/target/pit-reports" ${LOCAL_TARGET_DIR}
         mv "nohup.out" "${LOCAL_TARGET_DIR}/nohup-${ITERATION}.out"
