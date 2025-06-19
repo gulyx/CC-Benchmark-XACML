@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-LISTID_FILE="./listTupleFull.txt"
+LISTID_FILE="ToBeDefined"
 MVN_PROJECT_DIR=".."
 SRC_DIR="${MVN_PROJECT_DIR}/src/main/java" 
 SRC_TEST_DIR="${MVN_PROJECT_DIR}/src/test/java"

@@ -34,11 +34,14 @@ TARGET_PACKAGE="DefinedBelowByMeansAProcessedOption"
 
 BLANK_PLACE_HOLDER="§"
 
-if [[ -z "$1" ]]
+TMP_STORAGE_DIR="/tmp/tmp-storage-dir"
+
+if [[ -z "$1" || -z "$2" ]]
 then
-    echo "USAGE: $0 --balana|--herasaf [--random <intNumber>]"
+    echo "USAGE: $0 --balana|--herasaf <input_file> [--random <intNumber>]"
     exit 1
 else
+    LISTID_FILE="$2"
     case "$1" in
         "--balana" ) 
             CT_PROFILE="balana-CT-Profile"
@@ -46,6 +49,11 @@ else
             PATH_PDP_JAR="ToBeDefined"
             PATH_PDP_SRC="../src/test/resources/lib/sources/org.wso2.balana-1.2.12-sources.jar"
             TARGET_PACKAGE="org.wso2.balana"
+# YOU CAN SET THIS INFORMATION IF YOU ALREADY KNOW THE MAXIMUM
+# MAX_STMT_COV="15968"
+# MAX_BRANCH_COV="1342"
+# MAX_LINE_COV="3834"
+# MAX_COMPLEXITY_COV="1185"
         ;;
         "--herasaf" ) 
             CT_PROFILE="herasaf-CT-Profile"
@@ -53,18 +61,24 @@ else
             PATH_PDP_JAR="ToBeDefined"
             PATH_PDP_SRC="../src/test/resources/lib/sources/herasaf-xacml-core-2.0.4-sources.jar"
             TARGET_PACKAGE="org.herasaf.xacml"
+# YOU CAN SET THIS INFORMATION IF YOU ALREADY KNOW THE MAXIMUM
+# MAX_STMT_COV="10929"
+# MAX_BRANCH_COV="776"
+# MAX_LINE_COV="2678"
+# MAX_COMPLEXITY_COV="1267"
         ;;
     esac
 fi
 
-if [[ "$2" == "--random" && -n "$3" ]]
+if [[ "$3" == "--random" && -n "$4" ]]
 then
-    RANDOMIC_FLAG="$3"
+    RANDOMIC_FLAG="$4"
 else
     RANDOMIC_FLAG=""
 fi
 
 # echo "$CT_PROFILE $AT_PROFILE $PATH_PDP_JAR $PATH_PDP_SRC $TARGET_PACKAGE"
+# echo "$RANDOMIC_FLAG"
 # exit 1
 TMP_FILE_=`mktemp -p /tmp`
 
@@ -92,7 +106,8 @@ then
     COVERAGE_MISSED_COMPLEXITY="0"
     TEST_LIST="${CT_LABEL}"                    
 
-    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
+#    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
+    for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | grep -v "xacml3" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
     do
 # echo "Processing: ${COVERAGE_INFO}"	
         COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
@@ -198,7 +213,8 @@ do
 
         COVERAGE_INFO_PATTERN=`echo "${TARGET_PACKAGE}" | tr '/' '.'`
                 
-        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
+#        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
+        for COVERAGE_INFO in `grep "${COVERAGE_INFO_PATTERN}" "${JACOCO_OUTPUT_FILE}" | grep -v "xacml3" | sed "s/[[:blank:]]/${BLANK_PLACE_HOLDER}/g"`
         do
 # echo "Processing: ${COVERAGE_INFO}"	
             COUNTER=`echo ${COVERAGE_INFO} | cut -d "${JACOCO_CSV_SEPARATOR}" -f 5`
@@ -221,6 +237,7 @@ do
         done                
                        
        ((IS_COVERAGE_IMPROVED=(${NEW_COVERAGE_STMS}>${COVERAGE_STMS}) || (${NEW_COVERAGE_BRANCH}>${COVERAGE_BRANCH}) || (${NEW_COVERAGE_LINE}>${COVERAGE_LINE}) || (${NEW_COVERAGE_COMPLEXITY}>${COVERAGE_COMPLEXITY}) ))
+#       ((IS_COVERAGE_IMPROVED=(${NEW_COVERAGE_STMS}>=${COVERAGE_STMS}) || (${NEW_COVERAGE_BRANCH}>=${COVERAGE_BRANCH}) || (${NEW_COVERAGE_LINE}>=${COVERAGE_LINE}) || (${NEW_COVERAGE_COMPLEXITY}>=${COVERAGE_COMPLEXITY}) ))
                 
        echo "STMS: ${NEW_COVERAGE_STMS} VS. ${COVERAGE_STMS}"
        echo "BRANCH: ${NEW_COVERAGE_BRANCH} VS. ${COVERAGE_BRANCH}"
@@ -232,24 +249,28 @@ do
             echo "WOW ... some coverage index got an improvement"
 
             if [[ "${NEW_COVERAGE_STMS}" -gt "${COVERAGE_STMS}" ]]
+#            if [[ "${NEW_COVERAGE_STMS}" -ge "${COVERAGE_STMS}" ]]
             then
                 COVERAGE_STMS="${NEW_COVERAGE_STMS}"
                 COVERAGE_MISSED_STMS="${NEW_COVERAGE_MISSED_STMS}"
             fi
                     
             if [[ "${NEW_COVERAGE_BRANCH}" -gt "${COVERAGE_BRANCH}" ]]
+#            if [[ "${NEW_COVERAGE_BRANCH}" -ge "${COVERAGE_BRANCH}" ]]
             then
                 COVERAGE_BRANCH="${NEW_COVERAGE_BRANCH}"
                 COVERAGE_MISSED_BRANCH="${NEW_COVERAGE_MISSED_BRANCH}"
             fi
                     
             if [[ "${NEW_COVERAGE_LINE}" -gt "${COVERAGE_LINE}" ]]
+#            if [[ "${NEW_COVERAGE_LINE}" -ge "${COVERAGE_LINE}" ]]
             then
                 COVERAGE_LINE="${NEW_COVERAGE_LINE}"
                 COVERAGE_MISSED_LINE="${NEW_COVERAGE_MISSED_LINE}"
             fi
                     
             if [[ "${NEW_COVERAGE_COMPLEXITY}" -gt "${COVERAGE_COMPLEXITY}" ]]
+#            if [[ "${NEW_COVERAGE_COMPLEXITY}" -ge "${COVERAGE_COMPLEXITY}" ]]
             then
                 COVERAGE_COMPLEXITY="${NEW_COVERAGE_COMPLEXITY}"
                 COVERAGE_MISSED_COMPLEXITY="${NEW_COVERAGE_MISSED_COMPLEXITY}"
@@ -259,6 +280,14 @@ do
         else
             echo "No improvement for any of the coverage indexes"
         fi
+#######################################################
+       # Removing OLD DATA and SAVING target/XACML-Experiment is a temporaty dir
+       rm -rf "${TMP_STORAGE_DIR}"
+       mkdir -p "${TMP_STORAGE_DIR}"
+       cd ${MVN_PROJECT_DIR}
+       cp -R "target/XACML-Experiment" ${TMP_STORAGE_DIR}
+       cd -
+#######################################################
     else
         echo "[RESULT-TESTS] Some failure for PolicyID: ${ID_POLICY}, RequestID: ${ID_REQUEST}. It was not possible to check the improvement for any of the coverage indexes"        
     fi
@@ -272,6 +301,14 @@ do
 # else
 #     STOP_IT="1" 
 # fi
+
+# YOU CAN USE INFORMATION ON MAXIMUM COVERAVE IF YOU ALREADY KNOW IT
+# if [[ "${MAX_STMT_COV}" -eq "${COVERAGE_STMS}" && "${MAX_BRANCH_COV}" -eq "${COVERAGE_BRANCH}" && "${MAX_LINE_COV}" -eq "${COVERAGE_LINE}" && "${MAX_COMPLEXITY_COV}" -eq "${COVERAGE_COMPLEXITY}" ]]
+# then
+#    echo "[RESULT-TESTS] Max Knonw Coverage Reached"
+#    break
+# fi
+
 done
 TEST_LIST="${CT_LABEL},${TEST_LIST}"                    
 
